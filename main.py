@@ -97,8 +97,11 @@ word_list = ['год', 'человек', 'время', 'дело', 'жизнь',
              'обязательство', 'уход', 'горло', 'кризис', 'указание', 'плата', 'яблоко', 'препарат', 'действительность',
              'москвич', 'остаток', 'изображение', 'сделка', 'сочинение', 'покупатель', 'танк', 'затрата', 'строка', 'единица']
 
+
 def get_word(words):
     return choice(words)
+
+word = get_word(word_list)
 
 def display_hangman(tries):
     stages = [  # финальное состояние: голова, торс, обе руки, обе ноги
@@ -174,15 +177,18 @@ def display_hangman(tries):
     ]
     return stages[tries]
 
-el = []
+guessed_letters = []
+guessed_words = []
 
 def is_alpha(inp):
     result = inp
     if inp.isalpha():
-        if inp in el:
+        if inp in guessed_letters:
             return is_alpha(input('Вы это уже использовали, введите новое значение - '))
+        elif 1 < len(inp) < len(word):
+            return is_alpha(input(f'Введите одну букву или слово из ' + str(len(word)) + ' букв - '))
         else:
-            el.append(inp)
+            guessed_letters.append(inp)
             return result
     else:
         return is_alpha(input('Введите букву или слово - '))
@@ -191,30 +197,78 @@ def is_alpha(inp):
 def play(word):
     word_completion = '_' * len(word)
     guessed = False
-    guessed_letters = []
-    guessed_words = []
     tries = 6
-    attempt = ''
-    print('Давайте играть в угадайку слов!')
-    if tries == 5 or tries == 6:
-        print()
-        print(f'У вас есть ' + str(tries) + ' попыток')
-        print(display_hangman(tries))
-    elif 1 < tries < 5:
-        print()
-        print(f'У вас осталось ' + str(tries) + ' попытки')
-        print(display_hangman(tries))
-    else:
-        print()
-        print(f'У вас осталась ' + str(tries) + ' попытка')
-        print(display_hangman(tries))
+    print('Давай играть в угадайку слов!')
+    print('Если не угадаешь будешь повешен.')
+    print()
+    print(display_hangman(tries))
     print()
     print(f'Слово из ' + str(len(word)) + ' букв: ' + word_completion)
     for i in range(6):
-        s = is_alpha(input('Введите букву или слово - '))
-        print(s)
+        word_in = is_alpha(input('Введите букву или слово - '))
+        if word_in in word:
 
+            if len(word_in) == 1:
+                for j in range(len(word)):
+                    if word[j] == word_in:
+                        word_completion = word_completion[:j] + word_in + word_completion[j + 1:]
+                        tries -= 1
+                # TODO: Выводится 0 попыток и закончить при вводе по 1 букве выйгрыш
+                if tries == 5:
+                    print()
+                    print(f'У вас есть ' + str(tries) + ' попыток')
+                    print(display_hangman(tries))
+                    print(str(word_completion).upper())
+                elif 1 < tries < 5:
+                    print()
+                    print(f'У вас осталось ' + str(tries) + ' попытки')
+                    print(display_hangman(tries))
+                    print(str(word_completion).upper())
+                elif tries == 1:
+                    print()
+                    print(f'У вас осталась ' + str(tries) + ' попытка')
+                    print(display_hangman(tries))
+                    print(str(word_completion).upper())
+                else:
+                    print()
+                    print(f'У вас осталась ' + str(tries) + ' попытка')
+                    print(display_hangman(tries))
+                    print(str(word_completion).upper())
+            elif word_in == word:
+                word_completion = word
+                print('Вы выйграли!')
+                print(str(word_completion).upper())
+                break
 
-word = get_word(word_list)
+            # (str(word_completion).upper())
+
+# TODO: Разобраться почему функция display_hangman показывает не все картинки
+        else:
+            tries -= 1
+            print('Вы не угадали')
+            if tries == 5 or tries == 6:
+                print()
+                print(f'У вас есть ' + str(tries) + ' попыток')
+                print(display_hangman(tries))
+                print(str(word_completion).upper())
+            elif 1 < tries < 5:
+                print()
+                print(f'У вас осталось ' + str(tries) + ' попытки')
+                print(display_hangman(tries))
+                print(str(word_completion).upper())
+            elif tries == 1:
+                print()
+                print(f'У вас осталась ' + str(tries) + ' попытка')
+                print(display_hangman(tries))
+                print(str(word_completion).upper())
+            else:
+                print()
+                print(f'У вас осталась ' + str(tries) + ' попытка')
+                print(display_hangman(tries))
+                print(str(word_completion).upper())
+    print('Вы проиграли!')
+    print(display_hangman(0))
+    print(f'Слово ' + str(word).upper())
+# TODO: Организовать повторный запуск игры если пользователь пожелает
 print(word)
 play(word)
