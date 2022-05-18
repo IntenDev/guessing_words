@@ -97,7 +97,6 @@ word_list = ['год', 'человек', 'время', 'дело', 'жизнь',
              'обязательство', 'уход', 'горло', 'кризис', 'указание', 'плата', 'яблоко', 'препарат', 'действительность',
              'москвич', 'остаток', 'изображение', 'сделка', 'сочинение', 'покупатель', 'танк', 'затрата', 'строка', 'единица']
 
-
 def get_word(words):
     return choice(words)
 
@@ -178,7 +177,8 @@ def display_hangman(tries):
     return stages[tries]
 
 guessed_letters = []
-guessed_words = []
+# guessed_words = []
+# guessed = False
 
 def is_alpha(inp):
     result = inp
@@ -196,7 +196,6 @@ def is_alpha(inp):
 
 def play(word):
     word_completion = '_' * len(word)
-    guessed = False
     tries = 6
     print('Давай играть в угадайку слов!')
     print('Если не угадаешь будешь повешен.')
@@ -213,7 +212,7 @@ def play(word):
                     if word[j] == word_in:
                         word_completion = word_completion[:j] + word_in + word_completion[j + 1:]
                         tries -= 1
-                # TODO: Выводится 0 попыток и закончить при вводе по 1 букве выйгрыш
+
                 if tries == 5:
                     print()
                     print(f'У вас есть ' + str(tries) + ' попыток')
@@ -238,11 +237,14 @@ def play(word):
                 word_completion = word
                 print('Вы выйграли!')
                 print(str(word_completion).upper())
+                if input('Хотите еще сыграть? (да/нет) -') == 'да':
+                    guessed_letters.clear()
+                    word = get_word(word_list)
+                    play(word)
+                else:
+                    print('До встречи')
                 break
 
-            # (str(word_completion).upper())
-
-# TODO: Разобраться почему функция display_hangman показывает не все картинки
         else:
             tries -= 1
             print('Вы не угадали')
@@ -269,6 +271,11 @@ def play(word):
     print('Вы проиграли!')
     print(display_hangman(0))
     print(f'Слово ' + str(word).upper())
-# TODO: Организовать повторный запуск игры если пользователь пожелает
-print(word)
+    if input('Хотите еще сыграть? (да/нет) -') == 'да':
+        guessed_letters.clear()
+        word = get_word(word_list)
+        play(word)
+    else:
+        print('До встречи')
+
 play(word)
